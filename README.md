@@ -138,6 +138,116 @@ Control: You must consciously grant specific permissions (e.g., dynamodb:GetItem
 
 This setup significantly reduces your security risk by limiting the "blast radius" of any potential issue.
 
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 9 26 29 PM" src="https://github.com/user-attachments/assets/9f40acb3-81a0-4071-a8ff-0f8d83ea99da" />
+
+This is what my API Gateway resources and methods look like.
+
+API name: SecureNotesAPI, Stage name: Stage-cloud, Invoke URL: https://yfhcxv7bmd.execute-api.us-east-2.amazonaws.com/Stage-cloud
+
+In essence, API Gateway just passes the whole request details to your single Lambda, and your Lambda function acts as an internal router for all your API endpoints.
+
+What is a Lambda proxy integration? Lambda Proxy Integration in AWS API Gateway is a simplified and recommended way to connect your API endpoints directly to a Lambda function, acting as a "passthrough" or "proxy.
+
+**This is the HTML for my API Gateway**
+{\rtf1\ansi\ansicpg1252\cocoartf2822 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;} {\colortbl;\red255\green255\blue255;} {\*\expandedcolortbl;;} \margl1440\margr1440\vieww11520\viewh8400\viewkind0 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0 \f0\fs24 \cf0 \ \ \ \ \ \ \ \ \
+Secure Notes App
+\ \
+Create New Note
+\ \ Add Note\ \
+Your Notes
+\
+\ Loading notes...\
+\ \ \ \ }
+
+**This is my JavaScript**
+// IMPORTANT: REPLACE THIS WITH YOUR ACTUAL API GATEWAY INVOKE URL
+// Make sure it ends with your stage name, e.g., /prod or /dev
+const API_BASE_URL = ' **https://yfhcxv7bmd.execute-api.us-east-2.amazonaws.com/Stage-cloud;**
+
+async function fetchNotes() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/notes`);
+        const notes = await response.json();
+        const notesList = document.getElementById('notes-list');
+        notesList.innerHTML = '';
+        if (notes.length === 0) {
+            notesList.innerHTML = '<p>No notes yet. Create one!</p>';
+        } else {
+            notes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.innerHTML = `
+                    <strong>ID:</strong> ${note.noteId}<br>
+                    <strong>Content:</strong> ${note.content}
+                    <button onclick="deleteNote('${note.noteId}')">Delete</button>
+                `;
+                notesList.appendChild(div);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching notes:', error);
+        document.getElementById('notes-list').innerHTML = '<p style="color: red;">Error loading notes.</p>';
+    }
+}
+
+async function createNote() {
+    const noteContent = document.getElementById('noteContent').value;
+    if (!noteContent) {
+        alert('Note content cannot be empty.');
+        return;
+    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/notes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: noteContent })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert('Note created successfully!');
+            document.getElementById('noteContent').value = ''; // Clear input
+            fetchNotes(); // Refresh list
+        } else {
+            alert(`Error: ${result.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error creating note:', error);
+        alert('Failed to create note due to network error.');
+    }
+}
+
+async function deleteNote(noteId) {
+    if (!confirm(`Are you sure you want to delete note ${noteId}?`)) {
+        return;
+    }
+    try {
+        const response = await fetch(`${API_BASE_URL}/notes/${noteId}`, {
+            method: 'DELETE'
+        });
+        if (response.status === 204) { // 204 No Content for successful deletion
+            alert('Note deleted successfully!');
+            fetchNotes(); // Refresh list
+        } else {
+            const result = await response.json();
+            alert(`Error: ${result.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        alert('Failed to delete note due to network error.');
+    }
+}
+
+// Fetch notes when the page loads
+window.onload = fetchNotes;
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 9 59 25 PM" src="https://github.com/user-attachments/assets/0a1f4eea-cb7b-41a3-80b2-824c0c022bdf" />
+
+
+
+
 
 
 
