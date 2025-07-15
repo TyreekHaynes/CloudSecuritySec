@@ -293,6 +293,32 @@ This is the Security group for my project, acting as a firewall.
 **Security Group ID sg-086d7dac312386420**
 
 
+**This is my list of created Endpoints**
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 11 31 16 PM" src="https://github.com/user-attachments/assets/03692287-6323-4e4c-8917-401419870c7e" />
+
+VPC Endpoints are crucial for security because they allow your resources in a VPC (especially those in private subnets) to privately connect to AWS services (like S3, DynamoDB, Lambda) without traversing the public internet.
+
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 11 56 54 PM" src="https://github.com/user-attachments/assets/ed024376-98ca-4437-b9ea-6a53501d2522" />
+
+The AWSLambdaVPCAccessExecutionRole policy is required because when you connect a Lambda function to a VPC, the AWS Lambda service needs permissions (like ec2:CreateNetworkInterface, ec2:DescribeNetworkInterfaces, ec2:DeleteNetworkInterface) to create, describe, and delete Elastic Network Interfaces (ENIs) within your VPC. These ENIs are the mechanism that allows your Lambda function to establish network connectivity with your private VPC resources
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 12 01 54 AM" src="https://github.com/user-attachments/assets/44749a9e-3611-41a9-b5e4-f15d42482ca1" />
+
+These EC2 permissions allow the AWS Lambda service (acting on behalf of your function's role) to provision, manage, and de-provision the network interfaces that enable your function to exist and communicate within your VPC.
+
+While running Lambda in a VPC boosts security and enables private resource access, it cuts off direct internet access. You must then consciously add back internet access (via NAT Gateway) or private service access (via VPC Endpoints) if your Lambda needs to communicate outside its VPC.
+
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 12 10 46 AM" src="https://github.com/user-attachments/assets/2dd3a9cf-4d40-47d5-b217-926162ac979b" />
+
+What it is: A prefix list (pl-xxxxxxxx) is a collection of IP address ranges (CIDR blocks) for specific AWS services (like S3 or DynamoDB), maintained by AWS.
+
+Why it's used as a destination: In your VPC route table, a rule uses this prefix list as a destination. This tells your VPC: "Any traffic going to IPs in this list (i.e., to this AWS service) should go to the specified VPC Endpoint."
+
 
 
 
