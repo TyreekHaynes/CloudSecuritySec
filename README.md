@@ -13,10 +13,21 @@ I also stored this in an encrypted file, so it isn't easily accessible.
 
 Successful Login as the IAM user.
 
-**Since I'm using MAC I had to update brew, then run this** echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/divine/.zprofile
+**Since I'm using MAC, I had to update brew, then run this** echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/divine/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 I put the command aws configure, then put my Access key & Secret Access Key.
 
 <img width="1710" height="1107" alt="Screenshot 2025-07-14 at 8 02 43 PM" src="https://github.com/user-attachments/assets/62c698af-f44e-4369-b83e-045bf0ea8810" />
 
+This completed the foundational security setup for my AWS environment
+
+**Phase 2** 
+
+Core Application Setup
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 8 12 20 PM" src="https://github.com/user-attachments/assets/22a48672-00f5-47d7-8df6-5cf2daebfe8d" />
+
+I created A table in DynamoDB (shows the activeness). Also noted the primary key as noteId, and confirmed that encryption at rest is enabled.
+
+**"Encryption at rest means the practice of encrypting data while it's stored on a device or in a storage medium, such as a hard drive, SSD, or cloud storage."**
