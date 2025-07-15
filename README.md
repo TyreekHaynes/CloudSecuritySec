@@ -246,8 +246,51 @@ window.onload = fetchNotes;
 <img width="1710" height="1107" alt="Screenshot 2025-07-14 at 9 59 25 PM" src="https://github.com/user-attachments/assets/0a1f4eea-cb7b-41a3-80b2-824c0c022bdf" />
 
 
+**Phase 3: IAM Least Privilege & VPC Integration**
+
+**This is the Principle of Least Privilege**
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 11 07 01 PM" src="https://github.com/user-attachments/assets/b8cbbc36-567d-4dea-9162-ec1e2b356953" />
+
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"dynamodb:PutItem",
+				"dynamodb:DeleteItem",
+				"dynamodb:GetItem",
+				"dynamodb:Scan",
+				"dynamodb:UpdateItem"
+			],
+			"Resource": "arn:aws:dynamodb:us-east-2:086715933972:table/NotesTable"
+		}
+	]
+}
+
+This was the JSON of the DynamoDBNotesAccess.
+
+An Amazon Resource Name (ARN) is a unique identifier for every resource in AWS. Think of it like a unique address for an item in a massive warehouse. By including all these details, an ARN precisely points to a single, specific resource within the entire AWS cloud, regardless of account or region. 
+
+This is crucial for:
+IAM Policies: Defining granular permissions ("Allow this user to access only this specific S3 bucket").API Calls: Programmatically interacting with a particular resource.
+Cross-Service Integration: One AWS service referencing a resource in another service.
 
 
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 11 14 22 PM" src="https://github.com/user-attachments/assets/80a7411b-3de8-400a-bab3-b00910bd64b1" />
+
+VPC CIDR block was 10.0.0.0/16, and the Private subset CIDR blocks were set to 0.
+
+A VPC with no public subnets and no NAT Gateway represents a highly locked-down and isolated environment. It's chosen when the absolute highest level of security and control over network ingress and egress is paramount, typically for sensitive data, critical applications, or highly regulated workloads. All necessary external communication would then be handled through specific, auditable, and tightly controlled mechanisms that do not involve direct internet exposure.
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-14 at 9 59 25 PM" src="https://github.com/user-attachments/assets/4fc8a7b7-57bc-4eb1-ac02-26e9b2459236" />
+
+This is the Security group for my project, acting as a firewall.  
+
+**Security Group ID sg-086d7dac312386420**
 
 
 
