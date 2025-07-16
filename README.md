@@ -321,4 +321,54 @@ Why it's used as a destination: In your VPC route table, a rule uses this prefix
 
 
 
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 10 17 20 PM" src="https://github.com/user-attachments/assets/0c09afbe-b8e3-4eb1-b73e-d5733d0bf00b" />
+
+This is my Lambda function. I added the 'Access-Control-Allow-'
+
+
+**Frontend Accessibility & Security**
+
+
+1. When my website loads: You visit https://dg29rje7bg3hi.cloudfront.net/ in your browser, your notes application frontend (HTML, CSS, JavaScript) loads correctly.
+
+ - HTTPS is enforced: The URL in your browser should show https:// and a padlock icon, indicating a secure connection. If you try http:// it should redirect to https://. To ensure you are always on port 443 (Secure) and not port (80).
+ - S3 Bucket is Private: Your serverless-web-on-aws1 S3 bucket should NOT be publicly accessible. If you try to access its direct S3 URL (e.g., http://serverless-web-on-aws1.s3-website.us-east-2.amazonaws.com or https://serverless-web-on-aws1.s3.us-east-2.amazonaws.com/index.html), it should result in an AccessDenied error. CloudFront accesses it securely via OAC.
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 10 29 21 PM" src="https://github.com/user-attachments/assets/5d5eb266-fdb0-4b9f-938c-b3ff02c37c52" />
+
+**Example of the website failing**
+
+
+2. Full Application Functionality (End-to-End):
+
+All CRUD (Create, Read, Update, Delete) operations for your notes application work correctly:
+
+You can successfully Add new notes.
+
+You can List/View all notes.
+
+You can Update existing notes.
+
+You can Delete notes.
+
+
+3. Backend & Inter-Service Communication:
+
+Lambda in VPC: Your NoteHandler Lambda function is configured to run inside your VPC (associated with subnets and the LambdaHandlerSG security group).
+
+VPC Endpoints Utilized: Your Lambda function communicates with DynamoDB and S3 (for the backend notes_metadata bucket) entirely through their respective VPC Interface Endpoints (Privatelink), not over the public internet. This ensures private, secure data transfer.
+
+(You can't directly "see" this in action without advanced logging or network flow logs, but the configuration should be set up for it.)
+
+Lambda Outbound Rules: The LambdaHandlerSG Security Group (attached to your Lambda ENI in the VPC) has its Outbound Rules correctly configured to allow HTTPS (Port 443) traffic only to the specific Prefix List IDs for DynamoDB and S3 in your region (and potentially other necessary AWS services like CloudWatch). It should NOT have broad 0.0.0.0/0 outbound rules.
+
+
+4. CORS Configuration
+- Your NoteHandler Lambda function's Python code has the Access-Control-Allow-Origin header set exactly to your CloudFront domain: https://dg29rje7bg3hi.cloudfront.net. This is crucial for your browser to allow frontend-to-backend communication.
+ 
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 10 25 59 PM" src="https://github.com/user-attachments/assets/214ed640-8bdd-4325-aa66-0c735e08eb23" />
+
+
+
+
 
