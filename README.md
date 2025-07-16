@@ -1,7 +1,7 @@
 # CloudSecurity
 **Secure Serverless Notes Application**
 
-The goal is to use Frontend on S3/Cloudfront, Backend with API Gateway, Lambda, DynamoDB, all with robust security controls.
+The primary goal of this project was to build a secure, scalable, and cost-effective serverless web application on AWS from scratch. This involved understanding and integrating various AWS services to create a fully functional, end-to-end notes application, while prioritizing security best practices at every layer.
 
 <img width="1710" height="1107" alt="Screenshot 2025-07-14 at 7 43 57 PM" src="https://github.com/user-attachments/assets/1ae30ae7-10da-425d-9f6a-b91bdb92f8ad" />
 
