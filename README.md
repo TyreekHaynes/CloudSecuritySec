@@ -416,7 +416,8 @@ I also made another log for firewall detection named "NoteLogs"
 
 <img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 40 28 PM" src="https://github.com/user-attachments/assets/6021c1d0-900f-455d-8719-c4686a2b6875" />
 
-I also created a Cleanup Strategy for Deleting Resources
+
+**I also created a Cleanup Strategy for Deleting Resources**
 
 AWS WAF Web ACL:
 
@@ -497,6 +498,93 @@ NAT Gateway (if you created one): If you followed a guide that had you create a 
 Elastic IPs (EIPs): If you had a NAT Gateway, it would have consumed an Elastic IP. After deleting the NAT Gateway, go to "Elastic IPs," select the EIP, "Actions" -> "Release Elastic IP addresses."
 
 VPC: Finally, you can delete the VPC itself, but only after all contained resources (instances, ENIs, endpoints, NAT Gateways, etc.) are deleted. Select your custom VPC, "Actions" -> "Delete VPC." The console will usually tell you if there are dependencies left.
+
+**Final Step for Phase 6: Understanding Infrastructure as Code (Iac)**
+
+IaC is crucial for serverless applications due to:
+
+Consistency & Repeatability: Eliminates manual errors, ensuring identical environments across development, staging, and production.
+
+Version Control: Infrastructure definitions are treated as code, allowing tracking, rollbacks, and collaboration.
+
+Automation & Speed: Streamlines entire application stack deployments to a single command.
+
+Disaster Recovery: Enables rapid re-creation of the entire infrastructure if lost.
+
+Cost Management: Provides clear visibility and control over deployed resources.
+
+
+**How it applies to my project:**
+
+I manually created your S3 bucket, CloudFront distribution, API Gateway, Lambda function, DynamoDB table, VPC, security groups, and WAF rules. With IaC, all of these would be defined in one or a few text files.
+
+
+For example, a small snippet of what your Lambda function and API Gateway could look like in an AWS SAM template:
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A serverless notes application
+
+Resources:
+  NoteHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      CodeUri: s3://your-deployment-bucket/your-lambda-code.zip # Or a local path
+      MemorySize: 128
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref NotesTable # Grants CRUD to the NotesTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NotesTable
+      VpcConfig: # This links your Lambda to your VPC
+        SecurityGroupIds:
+          - sg-xxxxxxxxxxxxxxxxx # Your Lambda security group
+        SubnetIds:
+          - subnet-xxxxxxxxxxxxxxxxx # Your private subnets
+      Events:
+        NotesApi:
+          Type: Api
+          Properties:
+            Path: /notes
+            Method: any
+            RestApiId: !Ref NotesApi # Refers to the API Gateway below
+
+  NotesApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      EndpointConfiguration: REGIONAL
+      Cors: # CORS configuration for your CloudFront domain
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+        AllowOrigin: "'https://dg29rje7bg3hi.cloudfront.net'" # Your CloudFront URL
+        AllowCredentials: "'true'"
+      Auth: # For API Key usage
+        DefaultAuthorizer: AWS_IAM
+        # We would then define UsagePlan and APIKey resources here too
+
+  NotesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: notes
+      AttributeDefinitions:
+        - AttributeName: noteId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: noteId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST # On-demand
+
+  # WAF WebACL association could also be done here with AWS::WAFv2::WebACLAssociation
+  # CloudFront distribution and S3 bucket definitions would also be here.
+
+
+
+
 
 
 
