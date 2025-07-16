@@ -579,9 +579,7 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST # On-demand
 
-  # WAF WebACL association could also be done here with AWS::WAFv2::WebACLAssociation
-  # CloudFront distribution and S3 bucket definitions would also be here.
-
+      
 
 
 
