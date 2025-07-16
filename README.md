@@ -406,7 +406,97 @@ Cost impact: This managed rule group also costs $1.00 per month (prorated hourly
 <img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 30 12 PM" src="https://github.com/user-attachments/assets/1a32cc04-a960-4a64-9c93-9ba1b30663c9" />
 
 
+I also made another log for firewall detection named "NoteLogs"
 
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 36 20 PM" src="https://github.com/user-attachments/assets/e75ad97d-7f3a-4a81-bd0b-653e1da4605d" />
+
+
+
+**Now my firewall is now taling to the CloudFront and is active spotting CRS and AWSManagedRulesAmazonIpReputationList**
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 40 28 PM" src="https://github.com/user-attachments/assets/6021c1d0-900f-455d-8719-c4686a2b6875" />
+
+I also created a Cleanup Strategy for Deleting Resources
+
+AWS WAF Web ACL:
+
+Go to WAF Console (US East - N. Virginia).
+
+Go to "Web ACLs," select your Web ACL (NotesAppWebACL).
+
+Click "Disassociate Web ACL" if it's still associated with CloudFront. Confirm.
+
+Once disassociated, select the Web ACL again and click "Delete Web ACL." Confirm.
+
+CloudFront Distribution:
+
+Go to CloudFront Console.
+
+Select your distribution.
+
+Click "Disable." Confirm. This takes several minutes to propagate.
+
+Once Status changes to Disabled and State is Deployed, select it again and click "Delete." Confirm.
+
+API Gateway:
+
+Go to API Gateway Console.
+
+Select your notes-api REST API.
+
+Click "Actions" dropdown, then "Delete." Confirm by typing delete.
+
+If you created an API Key and Usage Plan, you'll need to delete those separately:
+
+Go to "API Keys," delete your API Key.
+
+Go to "Usage Plans," delete your Usage Plan.
+
+Lambda Function:
+
+Go to Lambda Console.
+
+Select your NoteHandler function.
+
+Click "Actions" dropdown, then "Delete." Confirm.
+
+Crucial Cleanup for Lambda:
+
+IAM Role: Go to IAM Console -> "Roles." Find the execution role for your Lambda (e.g., NoteHandlerRole or similar). If this role is only used by this Lambda, delete it. If other services use it, you might need to modify its permissions instead.
+
+CloudWatch Log Group: Go to CloudWatch Console -> "Log groups." Find the log group for your Lambda (usually /aws/lambda/your-function-name). Select it and click "Delete log group."
+
+CloudWatch Alarms: Go to CloudWatch Console -> "Alarms." Delete any alarms you created for this Lambda.
+
+SNS Topic & Subscription: Go to SNS Console -> "Topics." Delete the NotesAppAlarms topic. This will automatically delete its subscriptions.
+
+DynamoDB Table:
+
+Go to DynamoDB Console.
+
+Go to "Tables." Select your notes table.
+
+Click "Delete." Confirm by typing delete.
+
+S3 Buckets:
+
+Go to S3 Console.
+
+Your frontend bucket (serverless-web-on-aws1): This bucket must be empty before deletion. Select the bucket, click "Empty," type permanently delete, confirm. Then, select the empty bucket and click "Delete," type the bucket name, confirm.
+
+Your backend notes_metadata bucket: If you created one as part of the backend. Empty and delete it the same way.
+
+VPC and VPC Endpoints (Most Complex):
+
+Go to VPC Console.
+
+VPC Endpoints: In the left pane, click "Endpoints." Select your S3 and DynamoDB interface endpoints (e.g., com.amazonaws.us-east-2.s3, com.amazonaws.us-east-2.dynamodb). Click "Actions" -> "Delete VPC endpoints." Confirm.
+
+NAT Gateway (if you created one): If you followed a guide that had you create a NAT Gateway in your public subnet, delete it. This is important as it incurs an hourly charge. Go to "NAT Gateways," select it, "Actions" -> "Delete NAT Gateway."
+
+Elastic IPs (EIPs): If you had a NAT Gateway, it would have consumed an Elastic IP. After deleting the NAT Gateway, go to "Elastic IPs," select the EIP, "Actions" -> "Release Elastic IP addresses."
+
+VPC: Finally, you can delete the VPC itself, but only after all contained resources (instances, ENIs, endpoints, NAT Gateways, etc.) are deleted. Select your custom VPC, "Actions" -> "Delete VPC." The console will usually tell you if there are dependencies left.
 
 
 
