@@ -278,7 +278,6 @@ IAM Policies: Defining granular permissions ("Allow this user to access only thi
 Cross-Service Integration: One AWS service referencing a resource in another service.
 
 
-
 <img width="1710" height="1107" alt="Screenshot 2025-07-14 at 11 14 22 PM" src="https://github.com/user-attachments/assets/80a7411b-3de8-400a-bab3-b00910bd64b1" />
 
 VPC CIDR block was 10.0.0.0/16, and the Private subset CIDR blocks were set to 0.
@@ -326,7 +325,7 @@ Why it's used as a destination: In your VPC route table, a rule uses this prefix
 This is my Lambda function. I added the 'Access-Control-Allow-'
 
 
-**Frontend Accessibility & Security**
+**Phase 4: Frontend Accessibility & Security**
 
 
 1. When my website loads: You visit https://dg29rje7bg3hi.cloudfront.net/ in your browser, your notes application frontend (HTML, CSS, JavaScript) loads correctly.
@@ -367,6 +366,45 @@ Lambda Outbound Rules: The LambdaHandlerSG Security Group (attached to your Lamb
 - Your NoteHandler Lambda function's Python code has the Access-Control-Allow-Origin header set exactly to your CloudFront domain: https://dg29rje7bg3hi.cloudfront.net. This is crucial for your browser to allow frontend-to-backend communication.
  
 <img width="1710" height="1107" alt="Screenshot 2025-07-15 at 10 25 59 PM" src="https://github.com/user-attachments/assets/214ed640-8bdd-4325-aa66-0c735e08eb23" />
+
+
+
+**Phase 5: With the ensuring when people make notes I made sure to add CloudWatch logs to see when some STARTS, ENDS, and REPORTS.**
+
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 10 40 00 PM" src="https://github.com/user-attachments/assets/7256e595-d2b5-42c7-aaaf-df0fbded4872" />
+
+
+**Deployed CloudWatch Metrics for both Lambda and API Gateway.**
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 09 39 PM" src="https://github.com/user-attachments/assets/00dd0f80-9f9e-4199-bae5-f39578c3bcad" />
+
+
+
+
+**Set up a CloudWatch Alarm and confirmed that it can send emial notifications to you via SNS**
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 11 11 PM" src="https://github.com/user-attachments/assets/616bb0eb-3732-4eb5-80a7-dd18de5866cc" />
+
+
+**Phase 6: Advanced Security & Cleanup**
+
+1. 
+
+AWSManagedRulesCommonRuleSet (Core rule set - CRS)
+
+What it does: This is the foundational rule set that protects against common web exploits, including SQL injection, cross-site scripting (XSS), HTTP flood attacks, and other OWASP Top 10 risks. It's a general-purpose, broad defense. As well as being unimpactful in cost: This managed rule group itself costs $1.00 per month (prorated hourly), in addition to the base Web ACL fee and per-request charges. It does not have an extra subscription fee
+
+&
+
+2. AWSManagedRulesAmazonIpReputationList
+
+What it does: This rule group blocks requests from known malicious IP addresses identified by Amazon threat intelligence. This includes IPs associated with bots, reconnaissance, and DDoS activities.
+
+Cost impact: This managed rule group also costs $1.00 per month (prorated hourly), in addition to the base Web ACL fee and per-request charges. It does not have an extra subscription fee.
+
+<img width="1710" height="1107" alt="Screenshot 2025-07-15 at 11 30 12 PM" src="https://github.com/user-attachments/assets/1a32cc04-a960-4a64-9c93-9ba1b30663c9" />
+
 
 
 
