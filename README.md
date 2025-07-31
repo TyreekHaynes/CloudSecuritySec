@@ -588,7 +588,7 @@ Resources:
 In short:
 
 **Why it's Important for Cloud Security:**
-This project taught you to build a secure, scalable web application by applying layered security controls. You learned about:
+This project taught me to build a secure, scalable web application by applying layered security controls. I learned about:
 
 Least Privilege: Giving components (like Lambda functions) only the permissions they need using IAM.
 
@@ -602,8 +602,8 @@ Observability & Proactive Alerting: Setting up CloudWatch Logs, Metrics, and Ala
 
 Managed Services Security: Benefiting from AWS handling the underlying security patching and infrastructure of services like Lambda, API Gateway, and DynamoDB.
 
-**What You Used to Make It (Key Services):**
-You used a robust set of AWS serverless and networking services:
+**What I Used to Make It (Key Services):**
+I used a robust set of AWS serverless and networking services:
 
 AWS Lambda: Serverless compute for your backend logic.
 
